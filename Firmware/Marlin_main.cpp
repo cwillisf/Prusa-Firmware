@@ -1011,7 +1011,7 @@ void show_fw_version_warnings() {
     lcd_print_at_PGM(0, 1, PSTR("May destroy printer!"));
     lcd_print_at_PGM(0, 2, PSTR("ver ")); lcd_printPGM(PSTR(FW_VERSION_FULL));
     lcd_print_at_PGM(0, 3, PSTR(FW_REPOSITORY));
-    lcd_wait_for_click();
+    delay_keep_alive(5000); // lcd_wait_for_click();
     break;
 //	default: lcd_show_fullscreen_message_and_wait_P(_i("WARNING: This is an unofficial, unsupported build. Use at your own risk!")); break;////MSG_FW_VERSION_UNKNOWN c=20 r=8
 	}
