@@ -153,7 +153,13 @@
 
 #define EEPROM_MMU_LOAD_FAIL_TOT (EEPROM_MMU_FAIL - 2) //uint16_t
 #define EEPROM_MMU_LOAD_FAIL (EEPROM_MMU_LOAD_FAIL_TOT - 1) //uint8_t
-
+#define EEPROM_MMU_CUTTER_ENABLED (EEPROM_MMU_LOAD_FAIL - 1)
+#define EEPROM_UVLO_MESH_BED_LEVELING_FULL     (EEPROM_MMU_CUTTER_ENABLED - 12*12*2) //allow 12 calibration points for future expansion
+#define EEPROM_MBL_TYPE	(EEPROM_UVLO_MESH_BED_LEVELING_FULL-1) //uint8_t for mesh bed leveling precision
+#define EEPROM_MBL_MAGNET_ELIMINATION (EEPROM_MBL_TYPE -1)  
+#define EEPROM_MBL_POINTS_NR (EEPROM_MBL_MAGNET_ELIMINATION -1) //uint8_t number of points in one exis for mesh bed leveling
+#define EEPROM_MBL_PROBE_NR (EEPROM_MBL_POINTS_NR-1) //number of measurements for each point
+#define EEPROM_MMU_STEALTH (EEPROM_MBL_PROBE_NR-1)
 // !!!!!
 // !!!!! this is end of EEPROM section ... all updates MUST BE inserted before this mark !!!!!
 // !!!!!
@@ -194,6 +200,12 @@
 #include "ConfigurationStore.h"
 static M500_conf * const EEPROM_M500_base = reinterpret_cast<M500_conf*>(20); //offset for storing settings using M500
 #endif
+
+enum
+{
+    EEPROM_MMU_CUTTER_ENABLED_enabled = 1,
+    EEPROM_MMU_CUTTER_ENABLED_always = 2,
+};
 
 
 #endif // EEPROM_H

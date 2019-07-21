@@ -18,7 +18,16 @@ extern void menu_lcd_lcdupdate_func(void);
 void ultralcd_init();
 void lcd_setstatus(const char* message);
 void lcd_setstatuspgm(const char* message);
+//! return to the main status screen and display the alert message
+//! Beware - it has sideeffects:
+//! - always returns the display to the main status screen
+//! - always makes lcd_reset (which is slow and causes flicker)
+//! - does not update the message if there is already one (i.e. lcd_status_message_level > 0)
 void lcd_setalertstatuspgm(const char* message);
+//! only update the alert message on the main status screen
+//! has no sideeffects, may be called multiple times
+void lcd_updatestatuspgm(const char *message);
+
 void lcd_reset_alert_level();
 uint8_t get_message_level();
 void lcd_adjust_z();
@@ -44,6 +53,9 @@ void lcd_load_filament_color_check();
 extern bool lcd_selftest();
 
 void lcd_menu_statistics(); 
+
+void lcd_menu_extruder_info();                    // NOT static due to using inside "Marlin_main" module ("manage_inactivity()")
+void lcd_menu_show_sensors_state();               // NOT static due to using inside "Marlin_main" module ("manage_inactivity()")
 
 extern const char* lcd_display_message_fullscreen_P(const char *msg, uint8_t &nlines);
 extern const char* lcd_display_message_fullscreen_P(const char *msg);
@@ -115,6 +127,7 @@ extern int farm_status;
 #endif
 
 extern int8_t SilentModeMenu;
+extern uint8_t SilentModeMenu_MMU;
 
 extern bool cancel_heatup;
 extern bool isPrintPaused;
@@ -125,7 +138,6 @@ void lcd_commands();
 
 
 void change_extr(int extr);
-void extr_adj(int extruder);
 
 #ifdef SNMM
 void extr_unload_all(); 
@@ -134,7 +146,16 @@ void extr_unload_used();
 void extr_unload();
 
 typedef enum
-     {e_FILAMENT_ACTION_none,e_FILAMENT_ACTION_Load,e_FILAMENT_ACTION_autoLoad,e_FILAMENT_ACTION_unLoad,e_FILAMENT_ACTION_mmuLoad,e_FILAMENT_ACTION_mmuUnLoad,e_FILAMENT_ACTION_mmuEject} eFILAMENT_ACTION; // 'none' state is used as flag for (filament) autoLoad (i.e. opposite for 'autoLoad' state)
+{
+    e_FILAMENT_ACTION_none, //!< 'none' state is used as flag for (filament) autoLoad (i.e. opposite for 'autoLoad' state)
+    e_FILAMENT_ACTION_Load,
+    e_FILAMENT_ACTION_autoLoad,
+    e_FILAMENT_ACTION_unLoad,
+    e_FILAMENT_ACTION_mmuLoad,
+    e_FILAMENT_ACTION_mmuUnLoad,
+    e_FILAMENT_ACTION_mmuEject,
+    e_FILAMENT_ACTION_mmuCut,
+} eFILAMENT_ACTION;
 extern eFILAMENT_ACTION eFilamentAction;
 extern bool bFilamentFirstRun;
 extern bool bFilamentPreheatState;
